@@ -26,8 +26,8 @@ public class StringConstants {
     public static String app_banner_close = "app_banner_close";
 
 
-    public static String CATE_ID = "3651";
-    public static String APP_NAME = "trace-drawing";
+    public static String CATE_ID = "006";
+    public static String APP_NAME = "total-beginner";
 
     public static String daily_blog = "daily_blog";
     public static String learn_drawing_painting = "learn_drawing_painting";
