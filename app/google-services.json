@@ -379,6 +379,43 @@
     },
     {
       "client_info": {
+        "mobilesdk_app_id": "1:630555728705:android:de362148d578a4db61dfc0",
+        "android_client_info": {
+          "package_name": "com.paintology.lite.total.beginner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "630555728705-ae2hddiirda8jjpr74f1m3miqrfguvat.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.paintology.lite.total.beginner",
+            "certificate_hash": "4c9fd4279620a1038174e855cfda143c88a26074"
+          }
+        },
+        {
+          "client_id": "630555728705-hq7jk88i92udabkg7ur8hdk1tr7e1k2c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdoustn36KGs9okoQf6m1FEw7xVt8MV58"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "630555728705-betp7iprgvl24pbnfbt024inho36lrmd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:630555728705:android:394132f9a80ac9ad61dfc0",
         "android_client_info": {
           "package_name": "com.paintology.lite.trace.drawing"
