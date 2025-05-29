@@ -54,11 +54,6 @@ class UserPointActivity : BaseActivity() {
         ActivityUserPointBinding.inflate(layoutInflater)
     }
 
-    private val mHandler = Handler(Looper.getMainLooper())
-    private val adsRunner = Runnable { checkAdvertisement() }
-    private var isInterstitialLoadOrFailed = false
-    private var mCounter: Int = 0
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -72,44 +67,8 @@ class UserPointActivity : BaseActivity() {
         initToolbar()
         checkDrawingPoints()
         setData()
-        binding.tvWatchAd.onSingleClick {
-            showLoadingDialog()
-            loadInterRewardAd()
-            mHandler.post(adsRunner)
-        }
-    }
+        binding.tvWatchAd.visibility=View.GONE
 
-    private fun loadInterRewardAd() {
-        when (diComponent.sharedPreferenceUtils.rcvInterRewardNotification) {
-            0 -> {
-                isInterstitialLoadOrFailed = true
-            }
-
-            1 -> {
-                diComponent.admobRewardedAds.loadRewardedAd(this,
-                    if (BuildConfig.DEBUG) "ca-app-pub-3940256099942544/5354046379" else diComponent.sharedPreferenceUtils.interUserPointActivityRewardID,
-                    diComponent.sharedPreferenceUtils.rcvInterRewardNotification,
-                    diComponent.sharedPreferenceUtils.isAppPurchased,
-                    diComponent.internetManager.isInternetConnected,
-                    object : RewardedOnLoadCallBack {
-                        override fun onAdFailedToLoad(adError: String) {
-                            isInterstitialLoadOrFailed = true
-                        }
-
-                        override fun onAdLoaded() {
-                            checkAdLoad()
-                        }
-
-                        override fun onPreloaded() {
-                            isInterstitialLoadOrFailed = true
-                        }
-                    })
-            }
-
-            else -> {
-                isInterstitialLoadOrFailed = true
-            }
-        }
     }
 
     private fun showLoadingDialog() {
@@ -121,59 +80,6 @@ class UserPointActivity : BaseActivity() {
         dialog?.show()
     }
 
-    private fun checkAdvertisement() {
-        if (mCounter < 16) {
-            try {
-                mCounter++
-                if (isInterstitialLoadOrFailed) {
-                    mHandler.removeCallbacks { adsRunner }
-                    checkAdLoad()
-                } else {
-                    mHandler.removeCallbacks { adsRunner }
-                    mHandler.postDelayed(
-                        adsRunner, (1000)
-                    )
-                }
-            } catch (e: Exception) {
-                Log.e("AdsInformation", "${e.message}")
-            }
-        } else {
-            Log.e("AdsInformation", "checkAdvertisement: ELSE")
-            isInterstitialLoadOrFailed = true
-            mHandler.removeCallbacks { adsRunner }
-        }
-    }
-
-    private fun checkAdLoad() {
-        if (diComponent.admobRewardedAds.isRewardedLoaded()) {
-            diComponent.admobRewardedAds.showRewardedAd(
-                this,
-                object : RewardedOnShowCallBack {
-                    override fun onAdClicked() {}
-                    override fun onAdDismissedFullScreenContent() {
-                        setData()
-                    }
-
-                    override fun onAdFailedToShowFullScreenContent() {
-                        dialog?.dismiss()
-                        showToast(getString(R.string.no_ad))
-                    }
-
-                    override fun onAdImpression() {}
-                    override fun onAdShowedFullScreenContent() {
-                        dialog?.dismiss()
-                    }
-
-                    override fun onUserEarnedReward() {
-                        Log.w("POINTSS", "onUserEarnedReward: 1")
-                        FirebaseFirestoreApi.claimActivityPointsWithId("reward_ads", null)
-                    }
-                })
-        } else {
-            dialog?.dismiss()
-            showToast(getString(R.string.no_ad))
-        }
-    }
 
     private fun initToolbar() {
         setSupportActionBar(binding.toolbar)

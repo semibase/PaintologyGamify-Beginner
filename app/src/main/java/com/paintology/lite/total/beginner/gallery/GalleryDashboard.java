@@ -537,113 +537,6 @@ public class GalleryDashboard extends BaseActivity implements View.OnClickListen
         }
 
         frameLayout = findViewById(R.id.ads_banner_place_holder);
-        if (BuildConfig.DEBUG) {
-            getDiComponent().getAdmobBannerAds().loadBannerAds(this,
-                    frameLayout,
-                    "ca-app-pub-3940256099942544/2014213617",
-                    getDiComponent().getSharedPreferenceUtils().getRcvBannerDashBoard(),
-                    getDiComponent().getSharedPreferenceUtils().isAppPurchased(),
-                    getDiComponent().getInternetManager().isInternetConnected(),
-                    CollapsiblePositionType.NONE,
-                    new BannerCallBack() {
-                        @Override
-                        public void onAdCloseFullScreenNative() {
-                        }
-
-                        @Override
-                        public void onAdFailedToLoad(@NonNull String adError) {
-
-                        }
-
-                        @Override
-                        public void onAdLoaded() {
-
-                        }
-
-                        @Override
-                        public void onAdImpression() {
-
-                        }
-
-                        @Override
-                        public void onPreloaded() {
-
-                        }
-
-                        @Override
-                        public void onAdClicked() {
-
-                        }
-
-                        @Override
-                        public void onAdClosed() {
-
-                        }
-
-                        @Override
-                        public void onAdOpened() {
-
-                        }
-
-                        @Override
-                        public void onAdSwipeGestureClicked() {
-
-                        }
-                    });
-        } else {
-            getDiComponent().getAdmobBannerAds().loadBannerAds(this,
-                    frameLayout,
-                    getDiComponent().getSharedPreferenceUtils().getRcvBannerID(),
-                    getDiComponent().getSharedPreferenceUtils().getRcvBannerDashBoard(),
-                    getDiComponent().getSharedPreferenceUtils().isAppPurchased(),
-                    getDiComponent().getInternetManager().isInternetConnected(),
-                    CollapsiblePositionType.NONE,
-                    new BannerCallBack() {
-                        @Override
-                        public void onAdCloseFullScreenNative() {
-                        }
-
-                        @Override
-                        public void onAdFailedToLoad(@NonNull String adError) {
-
-                        }
-
-                        @Override
-                        public void onAdLoaded() {
-
-                        }
-
-                        @Override
-                        public void onAdImpression() {
-
-                        }
-
-                        @Override
-                        public void onPreloaded() {
-
-                        }
-
-                        @Override
-                        public void onAdClicked() {
-
-                        }
-
-                        @Override
-                        public void onAdClosed() {
-
-                        }
-
-                        @Override
-                        public void onAdOpened() {
-
-                        }
-
-                        @Override
-                        public void onAdSwipeGestureClicked() {
-
-                        }
-                    });
-        }
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -828,10 +721,7 @@ public class GalleryDashboard extends BaseActivity implements View.OnClickListen
                 KGlobal.showNetworkError(GalleryDashboard.this);
                 return;
             }
-
-            binding.appBarMain.adLoading.getRoot().setVisibility(View.VISIBLE);
-            loadInterRewardAd();
-            // mHandler.post(adsRunner);
+            moveToNotification();
         });
 
         try {
@@ -1658,61 +1548,6 @@ public class GalleryDashboard extends BaseActivity implements View.OnClickListen
         }
     }
 
-    private void loadInterRewardAd() {
-        if (getDiComponent().getSharedPreferenceUtils().getRcvInterRewardNotification() == 0) {
-            isInterstitialLoadOrFailed = true;
-            checkAdLoad();
-        } else {
-            if (BuildConfig.DEBUG) {
-                getDiComponent().getAdmobRewardedAds().loadRewardedAd(this,
-                        "ca-app-pub-3940256099942544/5354046379",
-                        getDiComponent().getSharedPreferenceUtils().getRcvInterRewardNotification(),
-                        getDiComponent().getSharedPreferenceUtils().isAppPurchased(),
-                        getDiComponent().getInternetManager().isInternetConnected(),
-                        new RewardedOnLoadCallBack() {
-                            @Override
-                            public void onAdFailedToLoad(@NonNull String adError) {
-                                isInterstitialLoadOrFailed = true;
-                                checkAdLoad();
-                            }
-
-                            @Override
-                            public void onAdLoaded() {
-                                checkAdLoad();
-                            }
-
-                            @Override
-                            public void onPreloaded() {
-                                isInterstitialLoadOrFailed = true;
-                            }
-                        });
-            } else {
-                getDiComponent().getAdmobRewardedAds().loadRewardedAd(this,
-                        getDiComponent().getSharedPreferenceUtils().getRcvInterRewardID(),
-                        getDiComponent().getSharedPreferenceUtils().getRcvInterRewardNotification(),
-                        getDiComponent().getSharedPreferenceUtils().isAppPurchased(),
-                        getDiComponent().getInternetManager().isInternetConnected(),
-                        new RewardedOnLoadCallBack() {
-                            @Override
-                            public void onAdFailedToLoad(@NonNull String adError) {
-                                isInterstitialLoadOrFailed = true;
-                                checkAdLoad();
-                            }
-
-                            @Override
-                            public void onAdLoaded() {
-                                checkAdLoad();
-                            }
-
-                            @Override
-                            public void onPreloaded() {
-                                isInterstitialLoadOrFailed = true;
-                            }
-                        });
-            }
-        }
-    }
-
     private void moveToNotification() {
         ContextKt.sendUserEvent(StringConstants.home_top_notifications);
         startActivity(new Intent(GalleryDashboard.this, NotificationActivity.class));
@@ -1737,46 +1572,6 @@ public class GalleryDashboard extends BaseActivity implements View.OnClickListen
             mHandler.removeCallbacks(adsRunner);
         }
     }*/
-
-    private void checkAdLoad() {
-        if (getDiComponent().getAdmobRewardedAds().isRewardedLoaded()) {
-            getDiComponent().getAdmobRewardedAds().showRewardedAd(this, new RewardedOnShowCallBack() {
-                @Override
-                public void onAdClicked() {
-
-                }
-
-                @Override
-                public void onAdDismissedFullScreenContent() {
-                    moveToNotification();
-                }
-
-                @Override
-                public void onAdFailedToShowFullScreenContent() {
-                    binding.appBarMain.adLoading.getRoot().setVisibility(View.GONE);
-                    moveToNotification();
-                }
-
-                @Override
-                public void onAdImpression() {
-
-                }
-
-                @Override
-                public void onAdShowedFullScreenContent() {
-                    binding.appBarMain.adLoading.getRoot().setVisibility(View.GONE);
-                }
-
-                @Override
-                public void onUserEarnedReward() {
-
-                }
-            });
-        } else {
-            binding.appBarMain.adLoading.getRoot().setVisibility(View.GONE);
-            moveToNotification();
-        }
-    }
 
     private void searchFromEditText() {
         String tutorialID = edt_hash_search.getText().toString();

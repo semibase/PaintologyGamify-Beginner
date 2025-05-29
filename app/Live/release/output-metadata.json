@@ -4,7 +4,7 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "com.paintology.lite.trace.drawing",
+  "applicationId": "com.paintology.lite.total.beginner",
   "variantName": "LiveRelease",
   "elements": [
     {
@@ -13,7 +13,7 @@
       "attributes": [],
       "versionCode": 6,
       "versionName": "3.0",
-      "outputFile": "26_05_2025_Paintology_Trace_Drawing_app_release_6.apk"
+      "outputFile": "28_05_2025_Paintology_total_beginner_app_release_6.apk"
     }
   ],
   "elementType": "File"

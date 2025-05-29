@@ -24,7 +24,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -465,32 +464,7 @@ public class FirstScreen extends AppCompatActivity {
     }
 
     private void moveNext() {
-        if (diComponent.getAdmobInterstitialAds().isInterstitialLoaded() && diComponent.getSharedPreferenceUtils().getRcvInterSplash() != 0) {
-            diComponent.getAdmobInterstitialAds().showInterstitialAd(this,
-                    new InterstitialOnShowCallBack() {
-                        @Override
-                        public void onAdDismissedFullScreenContent() {
-                            goToNextScreen();
-                        }
-
-                        @Override
-                        public void onAdFailedToShowFullScreenContent() {
-                            goToNextScreen();
-                        }
-
-                        @Override
-                        public void onAdShowedFullScreenContent() {
-
-                        }
-
-                        @Override
-                        public void onAdImpression() {
-
-                        }
-                    });
-        } else {
-            goToNextScreen();
-        }
+        goToNextScreen();
     }
 
     private void goToNextScreen() {
@@ -504,84 +478,14 @@ public class FirstScreen extends AppCompatActivity {
     private void fetchRemoteConfiguration() {
         diComponent.getRemoteConfiguration().checkRemoteConfig(success -> {
             if (success) {
-                mCounter = 0;
-                passAppID();
-                startHandler();
-                loadInter();
-                diComponent.getAdmobOpenApp().fetchAd();
+                mHandler.removeCallbacks(adsRunner);
+                moveNext();
             } else {
                 mHandler.removeCallbacks(adsRunner);
                 moveNext();
             }
             return null;
         });
-    }
-
-    private void passAppID() {
-        try {
-            ApplicationInfo ai = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
-            if (BuildConfig.DEBUG) {
-                ai.metaData.putString("com.google.android.gms.ads.APPLICATION_ID", "ca-app-pub-3940256099942544~3347511713");
-            } else {
-                ai.metaData.putString("com.google.android.gms.ads.APPLICATION_ID", diComponent.getSharedPreferenceUtils().getRcvAdmobAppID());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        MobileAds.initialize(this, initializationStatus -> {
-        });
-    }
-
-    private void loadInter() {
-        if (diComponent.getSharedPreferenceUtils().getRcvInterSplash() == 0) {
-            isNativeLoadedOrFailed = true;
-        } else {
-            if (BuildConfig.DEBUG) {
-                diComponent.getAdmobInterstitialAds().loadInterstitialAd(this,
-                        "ca-app-pub-3940256099942544/1033173712",
-                        diComponent.getSharedPreferenceUtils().getRcvInterSplash(),
-                        diComponent.getSharedPreferenceUtils().isAppPurchased(),
-                        diComponent.getInternetManager().isInternetConnected(),
-                        new InterstitialOnLoadCallBack() {
-                            @Override
-                            public void onAdFailedToLoad(@NonNull String adError) {
-                                isNativeLoadedOrFailed = true;
-                            }
-
-                            @Override
-                            public void onAdLoaded() {
-                                isNativeLoadedOrFailed = true;
-                            }
-
-                            @Override
-                            public void onPreloaded() {
-
-                            }
-                        });
-            } else {
-                diComponent.getAdmobInterstitialAds().loadInterstitialAd(this,
-                        diComponent.getSharedPreferenceUtils().getRcvInterID(),
-                        diComponent.getSharedPreferenceUtils().getRcvInterSplash(),
-                        diComponent.getSharedPreferenceUtils().isAppPurchased(),
-                        diComponent.getInternetManager().isInternetConnected(),
-                        new InterstitialOnLoadCallBack() {
-                            @Override
-                            public void onAdFailedToLoad(@NonNull String adError) {
-                                isNativeLoadedOrFailed = true;
-                            }
-
-                            @Override
-                            public void onAdLoaded() {
-                                isNativeLoadedOrFailed = true;
-                            }
-
-                            @Override
-                            public void onPreloaded() {
-
-                            }
-                        });
-            }
-        }
     }
 
     private void startHandler() {

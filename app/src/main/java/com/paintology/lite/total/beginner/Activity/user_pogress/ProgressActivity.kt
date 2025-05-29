@@ -92,11 +92,6 @@ class ProgressActivity : BaseActivity() {
     private var drawingAdapter: DrawingAdapter? = null
     private var tutorialAdapter: TutorialAdapter? = null
 
-    private val mHandler = Handler(Looper.getMainLooper())
-    private val adsRunner = Runnable { checkAdvertisement() }
-    private var isInterstitialLoadOrFailed = false
-    private var mCounter: Int = 0
-
     private var dialog: Dialog? = null
 
     @SuppressLint("NotifyDataSetChanged")
@@ -119,44 +114,7 @@ class ProgressActivity : BaseActivity() {
         initListeners()
         setData()
         startWork()
-        binding.tvWatchAd.onSingleClick {
-            showLoadingDialog()
-            loadInterRewardAd()
-            mHandler.post(adsRunner)
-        }
-    }
-
-    private fun loadInterRewardAd() {
-        when (diComponent.sharedPreferenceUtils.rcvInterRewardNotification) {
-            0 -> {
-                isInterstitialLoadOrFailed = true
-            }
-
-            1 -> {
-                diComponent.admobRewardedAds.loadRewardedAd(this,
-                    if (BuildConfig.DEBUG) "ca-app-pub-3940256099942544/5354046379" else diComponent.sharedPreferenceUtils.interProgressActivityRewardID,
-                    diComponent.sharedPreferenceUtils.rcvInterRewardNotification,
-                    diComponent.sharedPreferenceUtils.isAppPurchased,
-                    diComponent.internetManager.isInternetConnected,
-                    object : RewardedOnLoadCallBack {
-                        override fun onAdFailedToLoad(adError: String) {
-                            isInterstitialLoadOrFailed = true
-                        }
-
-                        override fun onAdLoaded() {
-                            checkAdLoad()
-                        }
-
-                        override fun onPreloaded() {
-                            isInterstitialLoadOrFailed = true
-                        }
-                    })
-            }
-
-            else -> {
-                isInterstitialLoadOrFailed = true
-            }
-        }
+        binding.tvWatchAd.visibility=View.GONE
     }
 
     private fun showLoadingDialog() {
@@ -166,60 +124,6 @@ class ProgressActivity : BaseActivity() {
         dialog?.setCancelable(false)
         dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog?.show()
-    }
-
-    private fun checkAdvertisement() {
-        if (mCounter < 16) {
-            try {
-                mCounter++
-                if (isInterstitialLoadOrFailed) {
-                    mHandler.removeCallbacks { adsRunner }
-                    checkAdLoad()
-                } else {
-                    mHandler.removeCallbacks { adsRunner }
-                    mHandler.postDelayed(
-                        adsRunner, (1000)
-                    )
-                }
-            } catch (e: Exception) {
-                Log.e("AdsInformation", "${e.message}")
-            }
-        } else {
-            Log.e("AdsInformation", "checkAdvertisement: ELSE")
-            isInterstitialLoadOrFailed = true
-            mHandler.removeCallbacks { adsRunner }
-        }
-    }
-
-    private fun checkAdLoad() {
-        if (diComponent.admobRewardedAds.isRewardedLoaded()) {
-            diComponent.admobRewardedAds.showRewardedAd(
-                this,
-                object : RewardedOnShowCallBack {
-                    override fun onAdClicked() {}
-                    override fun onAdDismissedFullScreenContent() {
-                        setData()
-                    }
-
-                    override fun onAdFailedToShowFullScreenContent() {
-                        dialog?.dismiss()
-                        showToast(getString(R.string.no_ad))
-                    }
-
-                    override fun onAdImpression() {}
-                    override fun onAdShowedFullScreenContent() {
-                        dialog?.dismiss()
-                    }
-
-                    override fun onUserEarnedReward() {
-                        Log.w("POINTSS", "onUserEarnedReward: 1")
-                        FirebaseFirestoreApi.claimActivityPointsWithId("reward_ads", null)
-                    }
-                })
-        } else {
-            dialog?.dismiss()
-            showToast(getString(R.string.no_ad))
-        }
     }
 
     override fun onResume() {

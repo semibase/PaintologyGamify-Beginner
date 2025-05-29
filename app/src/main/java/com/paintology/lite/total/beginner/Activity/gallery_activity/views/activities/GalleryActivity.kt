@@ -63,47 +63,6 @@ class GalleryActivity : BaseActivity(), LeaderBoardCountriesAdapter.OnCountryCli
 
         topLevel.onCreate().writeFlagId(this, R.drawable.img_world)
         topLevel.onCreate().writeLangName(this, "World")
-        diComponent.admobNativeAds.loadNativeAds(this,
-            binding.adsPlaceHolder,
-            if (BuildConfig.DEBUG) "ca-app-pub-3940256099942544/2247696110" else diComponent.sharedPreferenceUtils.rcvNativeID,
-            diComponent.sharedPreferenceUtils.rcvNativeCommunity,
-            diComponent.sharedPreferenceUtils.isAppPurchased,
-            diComponent.internetManager.isInternetConnected,
-            NativeType.CUSTOM_DOWN,
-            object : BannerCallBack {
-                override fun onAdFailedToLoad(adError: String) {
-
-                }
-
-                override fun onAdLoaded() {
-
-                }
-
-                override fun onAdImpression() {
-
-                }
-
-                override fun onPreloaded() {
-
-                }
-
-                override fun onAdClicked() {
-
-                }
-
-                override fun onAdClosed() {
-
-                }
-
-                override fun onAdOpened() {
-
-                }
-
-                override fun onAdSwipeGestureClicked() {
-
-                }
-
-            })
 
         getIntentData()
 

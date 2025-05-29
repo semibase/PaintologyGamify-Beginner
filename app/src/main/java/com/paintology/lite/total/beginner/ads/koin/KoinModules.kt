@@ -3,11 +3,6 @@ package com.paintology.lite.total.beginner.ads.koin
 import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
-import com.paintology.lite.total.beginner.ads.AdmobAppOpen
-import com.paintology.lite.total.beginner.ads.AdmobBannerAds
-import com.paintology.lite.total.beginner.ads.AdmobInterstitialAds
-import com.paintology.lite.total.beginner.ads.AdmobNativeAds
-import com.paintology.lite.total.beginner.ads.AdmobRewardedInterstitialAds
 import com.paintology.lite.total.beginner.ads.im.InternetManager
 import com.paintology.lite.total.beginner.ads.config.RemoteConfiguration
 import com.paintology.lite.total.beginner.ads.pref.SharedPreferenceUtils
@@ -34,12 +29,6 @@ private val firebaseModule = module {
 }
 
 private val adsModule = module {
-    single { AdmobAppOpen(get()) }
-    single { AdmobInterstitialAds() }
-    single { AdmobRewardedInterstitialAds() }
-//    single { AdmobPreLoadNativeAds() }
-    factory { AdmobNativeAds() }
-    factory { AdmobBannerAds() }
 }
 
 val modulesList = listOf(utilsModules, managerModules, firebaseModule, adsModule)
