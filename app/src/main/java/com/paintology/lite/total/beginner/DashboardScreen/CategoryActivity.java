@@ -447,7 +447,8 @@ public class CategoryActivity extends BaseActivity implements Interface_select_i
                             }
                         }
                         mCategory.setChilds(mChild);
-                        mCategories.add(mCategory);
+                        if (mCategory.getId().equalsIgnoreCase("153") || mCategory.getId().equalsIgnoreCase("002") || mCategory.getId().equalsIgnoreCase("006") || mCategory.getId().equalsIgnoreCase("007"))
+                            mCategories.add(mCategory);
 
                         if (cateId != null && cateId.equals(id)) {
                             mSelectedCategory = mCategory;
