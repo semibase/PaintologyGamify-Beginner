@@ -2,8 +2,10 @@ package com.paintology.lite.total.beginner.DashboardScreen;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
@@ -41,6 +43,7 @@ import com.paintology.lite.total.beginner.Activity.your_ranking.YourRankingModel
 import com.paintology.lite.total.beginner.Adapter.ShowCategoryAdapter;
 import com.paintology.lite.total.beginner.Adapter.ShowCategoryAdapterNew;
 import com.paintology.lite.total.beginner.BuildConfig;
+import com.paintology.lite.total.beginner.Model.BannerModel;
 import com.paintology.lite.total.beginner.Model.Category;
 import com.paintology.lite.total.beginner.Model.CategoryModel;
 import com.paintology.lite.total.beginner.R;
@@ -49,10 +52,12 @@ import com.paintology.lite.total.beginner.Retrofit.ApiInterface;
 import com.paintology.lite.total.beginner.ads.callbacks.BannerCallBack;
 import com.paintology.lite.total.beginner.ads.enums.NativeType;
 import com.paintology.lite.total.beginner.data.db.FirebaseFirestoreApi;
+import com.paintology.lite.total.beginner.databinding.LayoutBannerDrawBinding;
 import com.paintology.lite.total.beginner.gallery.GalleryDashboard;
 import com.paintology.lite.total.beginner.gallery.Interface_select_item;
 import com.paintology.lite.total.beginner.gallery.model_DownloadedTutorial;
 import com.paintology.lite.total.beginner.minipaint.PaintActivity;
+import com.paintology.lite.total.beginner.util.AppUtils;
 import com.paintology.lite.total.beginner.util.ContextKt;
 import com.paintology.lite.total.beginner.util.FirebaseUtils;
 import com.paintology.lite.total.beginner.util.KGlobal;
@@ -62,6 +67,7 @@ import com.paintology.lite.total.beginner.util.SpecingDecorationHorizontal;
 import com.paintology.lite.total.beginner.util.StringConstants;
 import com.paintology.lite.total.beginner.videoguide.VideoGuideActivity;
 import com.rey.material.app.BottomSheetDialog;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -141,6 +147,34 @@ public class CategoryActivity extends BaseActivity implements Interface_select_i
         mTextviewTitle = toolbar.findViewById(R.id.toolbar_title);
         mTextviewTitle.setText(title);
         mCategories = new ArrayList<>();
+
+
+        ArrayList<BannerModel> data = AppUtils.getTutBanners(this);
+        for (int i = 0; i < data.size(); i++) {
+            LayoutBannerDrawBinding bannerBinding = LayoutBannerDrawBinding.inflate(getLayoutInflater());
+            Picasso.get().load(Uri.parse(data.get(i).bannerImageUrl)).into(bannerBinding.ivOwnAdv);
+            int finalI = i;
+            bannerBinding.ivOwnAdv.setOnClickListener(v -> {
+                try {
+                    if (BuildConfig.DEBUG) {
+                        Toast.makeText(CategoryActivity.this,
+                                StringConstants.constants.ad_XX_tutorial_banner_click.replace("XX", String.valueOf(finalI)),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                    FirebaseUtils.logEvents(
+                            CategoryActivity.this,
+                            StringConstants.constants.ad_XX_tutorial_banner_click.replace("XX", String.valueOf(finalI))
+                    );
+                    KGlobal.openInBrowser(CategoryActivity.this, data.get(finalI).bannerLInk);
+                } catch (ActivityNotFoundException e) {
+                    Log.e("TAGGG", "Exception at view " + e.getMessage());
+                } catch (Exception e) {
+                    Log.e("TAGG", "Exception " + e.getMessage());
+                }
+            });
+
+            ((LinearLayout) findViewById(R.id.llAds)).addView(bannerBinding.getRoot());
+        }
 
 
         Intent intent = getIntent();
@@ -423,7 +457,8 @@ public class CategoryActivity extends BaseActivity implements Interface_select_i
                         Log.e("category", mCategory.getLevels().toString());
 
                         if (mCategory.getLevels().contains(levels)) {
-                            mCategoriesSub.add(mCategory);
+                            if (mCategory.getId().equalsIgnoreCase("153") || mCategory.getId().equalsIgnoreCase("002") || mCategory.getId().equalsIgnoreCase("006") || mCategory.getId().equalsIgnoreCase("007"))
+                                mCategoriesSub.add(mCategory);
                         }
                     }
 
@@ -433,15 +468,17 @@ public class CategoryActivity extends BaseActivity implements Interface_select_i
                         mLinearNoTutorial.setVisibility(View.GONE);
                     }
 
-                   /* adapterNew = new ShowCategoryAdapterNew(mCategoriesSub, CategoryActivity.this, _obj_interface);
+                    adapterNew = new ShowCategoryAdapterNew(mCategoriesSub, CategoryActivity.this, _obj_interface);
                     int space = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100,
                             getResources().getDisplayMetrics());
-                    rv_category_list.setAdapter(adapterNew);*/
+                    rv_category_list.setAdapter(adapterNew);
 
 
                 }
 
-                try {
+                progressDialog.dismiss();
+
+               /* try {
                     progressDialog.dismiss();
 
                     if (mSelectedCategory != null) {
@@ -456,7 +493,7 @@ public class CategoryActivity extends BaseActivity implements Interface_select_i
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                }
+                }*/
             }
         });
     }
